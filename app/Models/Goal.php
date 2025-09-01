@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Goal extends Model
 {
-    use HasFactory;
+    protected $fillable = ['name','target_amount','saved_amount','start_date'];
 }

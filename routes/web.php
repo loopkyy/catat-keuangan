@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SourceController;
+use App\Http\Controllers\TransactionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,4 +22,7 @@ Route::get('/', function () {
 Route::resource('categories', CategoryController::class);
 //sources
 Route::resource('sources', SourceController::class);
+//transactions
+Route::resource('transactions', TransactionController::class);
+
 

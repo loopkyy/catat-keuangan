@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\GoalController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,5 +25,8 @@ Route::resource('categories', CategoryController::class);
 Route::resource('sources', SourceController::class);
 //transactions
 Route::resource('transactions', TransactionController::class);
+//goals
+Route::resource('goals', GoalController::class);
+
 
 

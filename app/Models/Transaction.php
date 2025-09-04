@@ -7,12 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'title', 'description', 'type', 'amount', 'date', 
-        'category_id', 'source_id', 'goal_id'
+        'title',       
+        'amount',
+        'type', 
+        'description',
+        'category_id',
+        'source_id',
+        'goal_id',
+        'date'
     ];
 
-    public function category() { return $this->belongsTo(Category::class); }
-    public function source() { return $this->belongsTo(Source::class); }
-    public function goal() { return $this->belongsTo(Goal::class); }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function source()
+    {
+        return $this->belongsTo(Source::class);
+    }
+
+    public function goal()
+    {
+        return $this->belongsTo(Goal::class);
+    }
 }

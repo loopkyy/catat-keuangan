@@ -34,24 +34,34 @@
                         <td>{{ $g->name }}</td>
                         <td>Rp {{ number_format($g->target_amount,0,',','.') }}</td>
                         <td>Rp {{ number_format($g->saved_amount,0,',','.') }}</td>
-                        <td style="min-width: 150px;">
+                        <td style="min-width: 180px;">
                             @php
                                 $progress = ($g->target_amount > 0) ? round(($g->saved_amount / $g->target_amount) * 100, 2) : 0;
+                                $progressClass = 'bg-danger';
+                                if ($progress >= 50 && $progress < 100) {
+                                    $progressClass = 'bg-warning';
+                                } elseif ($progress >= 100) {
+                                    $progressClass = 'bg-success';
+                                }
                             @endphp
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" 
-                                     style="width: {{ $progress }}%;" 
-                                     aria-valuenow="{{ $progress }}" 
-                                     aria-valuemin="0" 
-                                     aria-valuemax="100">
-                                    {{ $progress }}%
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated {{ $progressClass }}"
+                                     role="progressbar"
+                                     style="width: {{ min($progress, 100) }}%;"
+                                     aria-valuenow="{{ $progress }}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100"
+                                     title="Rp {{ number_format($g->saved_amount,0,',','.') }} dari Rp {{ number_format($g->target_amount,0,',','.') }}">
+                                    {{ $progress >= 100 ? 'Selesai 🎉' : $progress.'%' }}
                                 </div>
                             </div>
                         </td>
                         <td>
-                            <a href="{{ route('goals.edit', $g->id) }}" class="btn btn-warning btn-sm me-1">
-                                <i class="bi bi-pencil-square"></i> Edit
-                            </a>
+                            @if($progress < 100)
+                                <a href="{{ route('goals.edit', $g->id) }}" class="btn btn-warning btn-sm me-1">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                            @endif
                             <form action="{{ route('goals.destroy', $g->id) }}" method="POST" class="d-inline delete-form">
                                 @csrf @method('DELETE')
                                 <button type="button" class="btn btn-danger btn-sm btn-delete">

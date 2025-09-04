@@ -18,37 +18,45 @@ class GoalController extends Controller
         return view('goals.create');
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'target_amount' => 'required|numeric|min:1',
-            'start_date' => 'nullable|date'
-        ]);
+   public function store(Request $request)
+{
+    $request->validate([
+        'name' => ['required','regex:/^[A-Za-z\s]+$/','max:255'],
+        'target_amount' => 'required',
+        'start_date' => 'nullable|date'
+    ]);
 
-        Goal::create($request->all());
+    $data = $request->all();
+    $data['name'] = ucwords(strtolower($data['name']));
+    $data['target_amount'] = (int) str_replace(['Rp','.',',',' '],'',$request->target_amount);
 
-        return redirect()->route('goals.index')->with('success','Tujuan tabungan berhasil ditambahkan');
-    }
+    Goal::create($data);
 
+    return redirect()->route('goals.index')->with('success','Tujuan tabungan berhasil ditambahkan');
+}
     public function edit(Goal $goal)
     {
         return view('goals.edit', compact('goal'));
     }
 
-    public function update(Request $request, Goal $goal)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'target_amount' => 'required|numeric|min:1',
-            'saved_amount' => 'required|numeric|min:0',
-            'start_date' => 'nullable|date'
-        ]);
+   public function update(Request $request, Goal $goal)
+{
+    $request->validate([
+        'name' => ['required','regex:/^[A-Za-z\s]+$/','max:255'],
+        'target_amount' => 'required',
+        'saved_amount' => 'required',
+        'start_date' => 'nullable|date'
+    ]);
 
-        $goal->update($request->all());
+    $data = $request->all();
+    $data['name'] = ucwords(strtolower($data['name']));
+    $data['target_amount'] = (int) str_replace(['Rp','.',',',' '],'',$request->target_amount);
+    $data['saved_amount'] = (int) str_replace(['Rp','.',',',' '],'',$request->saved_amount);
 
-        return redirect()->route('goals.index')->with('success','Tujuan tabungan berhasil diupdate');
-    }
+    $goal->update($data);
+
+    return redirect()->route('goals.index')->with('success','Tujuan tabungan berhasil diupdate');
+}
 
     public function destroy(Goal $goal)
     {

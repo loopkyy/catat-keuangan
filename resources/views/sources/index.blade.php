@@ -35,10 +35,10 @@
                                 <a href="{{ route('sources.edit', $src->id) }}" class="btn btn-sm btn-warning text-dark">
                                     <i class="bi bi-pencil-square"></i> Edit
                                 </a>
-                                <form action="{{ route('sources.destroy', $src->id) }}" method="POST" class="d-inline">
+                                <form action="{{ route('sources.destroy', $src->id) }}" method="POST" class="d-inline delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus sumber ini?')">
+                                    <button type="button" class="btn btn-sm btn-danger btn-delete">
                                         <i class="bi bi-trash"></i> Hapus
                                     </button>
                                 </form>
@@ -55,3 +55,31 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+        deleteButtons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                let form = this.closest('form');
+                Swal.fire({
+                    title: 'Yakin?',
+                    text: "Data ini akan dihapus permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
+@endpush

@@ -20,8 +20,23 @@ class SourceController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required|string|max:255']);
-        Source::create($request->all());
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[A-Za-z\s]+$/'
+            ],
+        ], [
+            'name.regex' => 'Nama sumber hanya boleh huruf dan spasi.'
+        ]);
+
+        // format huruf pertama kapital
+        $name = ucfirst(strtolower($request->name));
+
+        Source::create([
+            'name' => $name,
+        ]);
 
         return redirect()->route('sources.index')->with('success', 'Sumber pemasukan berhasil ditambahkan');
     }
@@ -33,8 +48,23 @@ class SourceController extends Controller
 
     public function update(Request $request, Source $source)
     {
-        $request->validate(['name' => 'required|string|max:255']);
-        $source->update($request->all());
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[A-Za-z\s]+$/'
+            ],
+        ], [
+            'name.regex' => 'Nama sumber hanya boleh huruf dan spasi.'
+        ]);
+
+        // format huruf pertama kapital
+        $name = ucfirst(strtolower($request->name));
+
+        $source->update([
+            'name' => $name,
+        ]);
 
         return redirect()->route('sources.index')->with('success', 'Sumber pemasukan berhasil diupdate');
     }

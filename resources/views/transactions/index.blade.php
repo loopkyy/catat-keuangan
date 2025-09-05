@@ -44,62 +44,34 @@
         </div>
     </div>
 
-    {{-- Tabel Transaksi --}}
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-0">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Judul</th>
-                        <th>Deskripsi</th>
-                        <th>Jenis</th>
-                        <th>Kategori / Sumber</th>
-                        <th>Jumlah</th>
-                        <th class="text-end">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($transactions as $t)
-                        <tr>
-                            <td>{{ $t->date }}</td>
-                            <td>{{ $t->title }}</td>
-                            <td>{{ $t->description }}</td>
-                            <td>
-                                @if($t->type == 'income')
-                                    <span class="badge bg-success">Pemasukan</span>
-                                @else
-                                    <span class="badge bg-danger">Pengeluaran</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($t->type == 'income')
-                                    {{ $t->source?->name }}
-                                @else
-                                    {{ $t->category?->name }}
-                                @endif
-                            </td>
-                            <td>Rp {{ number_format($t->amount,0,',','.') }}</td>
-                            <td class="text-end">
-                                <a href="{{ route('transactions.edit', $t->id) }}" class="btn btn-sm btn-warning text-dark">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-                                <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="{{ $t->id }}">
-                                    <i class="bi bi-trash"></i> Hapus
-                                </button>
-                                <form id="delete-form-{{ $t->id }}" action="{{ route('transactions.destroy', $t->id) }}" method="POST" class="d-none">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center text-muted">Belum ada transaksi</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    {{-- Tabs --}}
+    <ul class="nav nav-tabs mb-3" id="transactionTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all"
+                type="button" role="tab">Semua</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="income-tab" data-bs-toggle="tab" data-bs-target="#income"
+                type="button" role="tab">Pemasukan</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="expense-tab" data-bs-toggle="tab" data-bs-target="#expense"
+                type="button" role="tab">Pengeluaran</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="transactionTabsContent">
+        {{-- Semua --}}
+        <div class="tab-pane fade show active" id="all" role="tabpanel">
+            @include('transactions.partials.table', ['transactions' => $transactions])
+        </div>
+        {{-- Pemasukan --}}
+        <div class="tab-pane fade" id="income" role="tabpanel">
+            @include('transactions.partials.table', ['transactions' => $transactionsIncome])
+        </div>
+        {{-- Pengeluaran --}}
+        <div class="tab-pane fade" id="expense" role="tabpanel">
+            @include('transactions.partials.table', ['transactions' => $transactionsExpense])
         </div>
     </div>
 </div>

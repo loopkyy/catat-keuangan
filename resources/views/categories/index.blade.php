@@ -4,7 +4,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Kategori</h2>
     <a href="{{ route('categories.create') }}" class="btn btn-success">
-        <i class="bi bi-plus-lg"></i> Tambah Kategori
+         <i class="bi bi-plus-circle"></i> Tambah Kategori
     </a>
 </div>
 
@@ -14,7 +14,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
-
 <div class="card shadow-sm">
     <div class="card-body">
         <ul class="list-group list-group-flush">
@@ -39,6 +38,12 @@
         </ul>
     </div>
 </div>
+
+{{-- Pagination --}}
+<div class="mt-3 d-flex justify-content-center">
+    {{ $categories->links('custom-pagination') }}
+</div>
+
 
 {{-- Script SweetAlert2 --}}
 <script>

@@ -13,8 +13,10 @@
 
                 <div class="mb-3">
                     <label class="form-label">Judul</label>
-                    <input type="text" name="title" class="form-control" 
-                           value="{{ old('title', $transaction->title) }}" required>
+                    <input type="text" name="title" id="title" class="form-control"
+                           value="{{ old('title', $transaction->title) }}"
+                           required pattern="[A-Za-z\s]+" 
+                           title="Judul hanya boleh berisi huruf dan spasi">
                 </div>
 
                 <div class="mb-3">
@@ -50,14 +52,14 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Jumlah</label>
-                    <input type="number" name="amount" class="form-control" 
-                           value="{{ old('amount', $transaction->amount) }}" required>
+                    <label class="form-label">Jumlah (Rp)</label>
+                    <input type="text" name="amount" id="amount" class="form-control"
+                           value="{{ old('amount', number_format($transaction->amount,0,'.','.')) }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Tanggal</label>
-                    <input type="date" name="date" class="form-control" 
+                    <input type="date" name="date" class="form-control"
                            value="{{ old('date', $transaction->date) }}" required>
                 </div>
 
@@ -81,5 +83,17 @@ function toggleSelect(){
     document.getElementById('sourceSelect').style.display = type === 'income' ? 'block' : 'none';
     document.getElementById('categorySelect').style.display = type === 'expense' ? 'block' : 'none';
 }
+
+// Auto-format input angka ribuan
+const amountInput = document.getElementById('amount');
+amountInput.addEventListener('input', function(e) {
+    let value = this.value.replace(/\D/g,'');
+    this.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+});
+
+// Hapus titik sebelum submit
+document.querySelector('form').addEventListener('submit', function() {
+    amountInput.value = amountInput.value.replace(/\./g, '');
+});
 </script>
 @endsection

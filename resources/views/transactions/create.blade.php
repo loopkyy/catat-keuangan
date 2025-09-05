@@ -14,7 +14,9 @@
 
                         <div class="mb-3">
                             <label for="title" class="form-label">Judul</label>
-                            <input type="text" class="form-control" id="title" name="title" required>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   required pattern="[A-Za-z\s]+" 
+                                   title="Judul hanya boleh berisi huruf">
                         </div>
 
                         <div class="mb-3">
@@ -46,8 +48,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="amount" class="form-label">Jumlah</label>
-                            <input type="number" class="form-control" id="amount" name="amount" required>
+                            <label for="amount" class="form-label">Jumlah (Rp)</label>
+                            <input type="text" class="form-control" id="amount" name="amount" required>
                         </div>
 
                         <div class="mb-3">
@@ -81,5 +83,17 @@ function toggleSelect(){
     document.getElementById('sourceSelect').style.display = type === 'income' ? 'block' : 'none';
     document.getElementById('categorySelect').style.display = type === 'expense' ? 'block' : 'none';
 }
+
+// Auto-format input angka ribuan
+const amountInput = document.getElementById('amount');
+amountInput.addEventListener('input', function(e) {
+    let value = this.value.replace(/\D/g,'');
+    this.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+});
+
+// Hapus titik sebelum submit
+document.querySelector('form').addEventListener('submit', function() {
+    amountInput.value = amountInput.value.replace(/\./g, '');
+});
 </script>
 @endsection

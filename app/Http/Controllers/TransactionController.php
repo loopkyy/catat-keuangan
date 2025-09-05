@@ -11,7 +11,9 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with(['category','source'])->orderBy('date', 'desc')->get();
+        $transactions = Transaction::with(['category','source'])
+            ->orderBy('date', 'desc')
+            ->get();
 
         $totalIncome = Transaction::where('type','income')->sum('amount');
         $totalExpense = Transaction::where('type','expense')->sum('amount');
@@ -27,19 +29,28 @@ class TransactionController extends Controller
         return view('transactions.create', compact('categories','sources'));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'type' => 'required|in:income,expense',
-            'amount' => 'required|numeric|min:1',
-            'date' => 'required|date',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'title' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[A-Za-z\s]+$/'
+        ],
+        'type' => 'required|in:income,expense',
+        'amount' => 'required|numeric|min:1',
+        'date' => 'required|date',
+    ], [
+        'title.regex' => 'Judul hanya boleh berisi huruf.',
+    ]);
 
-        Transaction::create($request->all());
+    Transaction::create($request->all());
 
-        return redirect()->route('transactions.index')->with('success','Transaksi berhasil dicatat');
-    }
+    return redirect()->route('transactions.index')
+        ->with('success','Transaksi berhasil dicatat');
+}
+
 
     public function edit(Transaction $transaction)
     {
@@ -48,23 +59,31 @@ class TransactionController extends Controller
         return view('transactions.edit', compact('transaction','categories','sources'));
     }
 
-    public function update(Request $request, Transaction $transaction)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'type' => 'required|in:income,expense',
-            'amount' => 'required|numeric|min:1',
-            'date' => 'required|date',
-        ]);
+   public function update(Request $request, Transaction $transaction)
+{
+    $request->validate([
+        'title' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[A-Za-z\s]+$/'
+        ],
+        'type' => 'required|in:income,expense',
+        'amount' => 'required|numeric|min:1',
+        'date' => 'required|date',
+    ], [
+        'title.regex' => 'Judul hanya boleh berisi huruf.',
+    ]);
 
-        $transaction->update($request->all());
+    $transaction->update($request->all());
 
-        return redirect()->route('transactions.index')->with('success','Transaksi berhasil diupdate');
-    }
-
+    return redirect()->route('transactions.index')
+        ->with('success','Transaksi berhasil diupdate');
+}
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();
-        return redirect()->route('transactions.index')->with('success','Transaksi berhasil dihapus');
+        return redirect()->route('transactions.index')
+            ->with('success','Transaksi berhasil dihapus');
     }
 }

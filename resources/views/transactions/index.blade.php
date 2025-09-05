@@ -52,6 +52,7 @@
                     <tr>
                         <th>Tanggal</th>
                         <th>Judul</th>
+                        <th>Deskripsi</th>
                         <th>Jenis</th>
                         <th>Kategori / Sumber</th>
                         <th>Jumlah</th>
@@ -63,6 +64,7 @@
                         <tr>
                             <td>{{ $t->date }}</td>
                             <td>{{ $t->title }}</td>
+                            <td>{{ $t->description }}</td>
                             <td>
                                 @if($t->type == 'income')
                                     <span class="badge bg-success">Pemasukan</span>
@@ -82,18 +84,18 @@
                                 <a href="{{ route('transactions.edit', $t->id) }}" class="btn btn-sm btn-warning text-dark">
                                     <i class="bi bi-pencil-square"></i> Edit
                                 </a>
-                                <form action="{{ route('transactions.destroy', $t->id) }}" method="POST" class="d-inline">
+                                <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="{{ $t->id }}">
+                                    <i class="bi bi-trash"></i> Hapus
+                                </button>
+                                <form id="delete-form-{{ $t->id }}" action="{{ route('transactions.destroy', $t->id) }}" method="POST" class="d-none">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus transaksi ini?')">
-                                        <i class="bi bi-trash"></i> Hapus
-                                    </button>
                                 </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted">Belum ada transaksi</td>
+                            <td colspan="7" class="text-center text-muted">Belum ada transaksi</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -102,3 +104,31 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteButtons = document.querySelectorAll('.btn-delete');
+    deleteButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.dataset.id;
+            Swal.fire({
+                title: 'Yakin?',
+                text: "Transaksi ini akan dihapus permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            });
+        });
+    });
+});
+</script>
+@endpush

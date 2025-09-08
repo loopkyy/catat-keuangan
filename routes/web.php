@@ -5,28 +5,32 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\GoalController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| Here is where you can register web routes for your application.
 |
 */
 
 Route::get('/', function () {
     return view('welcome');
 });
-//categories
+
+// Categories
 Route::resource('categories', CategoryController::class);
-//sources
+
+// Sources
 Route::resource('sources', SourceController::class);
-//transactions
-Route::resource('transactions', TransactionController::class);
-//goals
+
+// Transactions (tanpa show karena tidak ada detail transaksi)
+Route::resource('transactions', TransactionController::class)->except(['show']);
+
+// Goals
 Route::resource('goals', GoalController::class);
 
-
-
+// Export PDF transaksi
+Route::get('/transactions/export', [TransactionController::class, 'exportPdf'])
+    ->name('transactions.export');

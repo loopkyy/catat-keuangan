@@ -8,6 +8,8 @@ use App\Models\Source;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Exports\TransactionsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TransactionController extends Controller
 {
@@ -30,7 +32,7 @@ class TransactionController extends Controller
             ->orderBy('date', 'desc')
             ->paginate(10, ['*'], 'expense_page');
 
-        // Hitung total
+        // Hitung total global
         $totalIncome = Transaction::where('type','income')->sum('amount');
         $totalExpense = Transaction::where('type','expense')->sum('amount');
         $balance = $totalIncome - $totalExpense;
@@ -115,52 +117,127 @@ class TransactionController extends Controller
         return redirect()->route('transactions.index')
             ->with('success','Transaksi berhasil dihapus');
     }
-public function exportPdf(Request $request)
-{
-    $type = $request->query('type');   // contoh: ?type=income
-    $range = $request->query('range'); // contoh: ?range=monthly
 
+private function filterTransactions($type, $range)
+{
     $today = Carbon::today();
+
     if ($range === 'today') {
-        $start = $today;
-        $end = $today->copy()->endOfDay();
+        $start = $today->copy()->startOfDay();
+        $end   = $today->copy()->endOfDay();
     } elseif ($range === 'weekly') {
         $start = $today->copy()->startOfWeek();
-        $end = $today->copy()->endOfWeek();
+        $end   = $today->copy()->endOfWeek();
     } elseif ($range === 'monthly') {
         $start = $today->copy()->startOfMonth();
-        $end = $today->copy()->endOfMonth();
+        $end   = $today->copy()->endOfMonth();
     } else {
         $start = null;
-        $end = null;
+        $end   = null;
     }
 
-    $query = Transaction::query();
+    $query = Transaction::with(['category','source']);
 
     if ($start && $end) {
         $query->whereBetween('date', [$start, $end]);
     }
 
-    if ($type === 'income') {
-        $query->where('type', 'income');
-    } elseif ($type === 'expense') {
-        $query->where('type', 'expense');
+    if ($type !== 'all') {
+        $query->where('type', $type);
     }
 
-    $transactions = $query->orderBy('date', 'desc')->get();
-    $total = $transactions->sum('amount');
+    $transactions = $query->orderBy('date','desc')->get();
+
+    // Total di periode
+    $totalIncome  = $transactions->where('type','income')->sum('amount');
+    $totalExpense = $transactions->where('type','expense')->sum('amount');
+
+    // Saldo awal (sebelum periode)
+    if ($start) {
+        $incomeBefore  = Transaction::where('type','income')
+                        ->where('date', '<', $start)->sum('amount');
+        $expenseBefore = Transaction::where('type','expense')
+                        ->where('date', '<', $start)->sum('amount');
+        $saldoAwal = $incomeBefore - $expenseBefore;
+    } else {
+        $saldoAwal = 0;
+    }
+
+    // Saldo akhir (sampai akhir periode)
+    if ($end) {
+        $incomeUntil  = Transaction::where('type','income')
+                        ->where('date', '<=', $end)->sum('amount');
+        $expenseUntil = Transaction::where('type','expense')
+                        ->where('date', '<=', $end)->sum('amount');
+        $saldoAkhir = $incomeUntil - $expenseUntil;
+    } else {
+        $incomeAll  = Transaction::where('type','income')->sum('amount');
+        $expenseAll = Transaction::where('type','expense')->sum('amount');
+        $saldoAkhir = $incomeAll - $expenseAll;
+    }
+
+    return [
+        $transactions, 
+        $totalIncome, 
+        $totalExpense, 
+        $saldoAwal, 
+        $saldoAkhir, 
+        $start, 
+        $end
+    ];
+}
+
+public function exportPdf($type, $range)
+{
+    [
+        $transactions,
+        $totalIncome,
+        $totalExpense,
+        $saldoAwal,
+        $saldoAkhir,
+        $start,
+        $end
+    ] = $this->filterTransactions($type, $range);
 
     $pdf = Pdf::loadView('transactions.export', [
         'transactions' => $transactions,
         'type' => $type,
         'range' => $range,
-        'total' => $total,
+        'totalIncome' => $totalIncome,
+        'totalExpense' => $totalExpense,
+        'saldoAwal' => $saldoAwal,
+        'saldoAkhir' => $saldoAkhir,
         'start' => $start,
         'end' => $end,
     ]);
 
     $filename = "laporan-{$type}-{$range}.pdf";
     return $pdf->download($filename);
+}
+
+public function exportExcel($type, $range)
+{
+    [
+        $transactions,
+        $totalIncome,
+        $totalExpense,
+        $saldoAwal,
+        $saldoAkhir,
+        $start,
+        $end
+    ] = $this->filterTransactions($type, $range);
+
+    return Excel::download(
+        new TransactionsExport(
+            $transactions,
+            $totalIncome,
+            $totalExpense,
+            $saldoAwal,
+            $saldoAkhir,
+            $type
+        ),
+        "laporan-{$type}-{$range}.xlsx"
+    );
 }
 
 }

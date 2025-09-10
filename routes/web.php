@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\GoalController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +16,7 @@ use App\Http\Controllers\GoalController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 // Categories
 Route::resource('categories', CategoryController::class);
@@ -32,5 +31,10 @@ Route::resource('transactions', TransactionController::class)->except(['show']);
 Route::resource('goals', GoalController::class);
 
 // Export PDF transaksi
-Route::get('/transactions/export', [TransactionController::class, 'exportPdf'])
-    ->name('transactions.export');
+Route::get('/transactions/export/pdf/{type}/{range}', [TransactionController::class, 'exportPdf'])
+    ->name('transactions.export.pdf');
+
+// Export Excel transaksi
+Route::get('/transactions/export/excel/{type}/{range}', [TransactionController::class, 'exportExcel'])
+    ->name('transactions.export.excel');
+

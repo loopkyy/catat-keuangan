@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0"><i class="bi bi-wallet2 me-2"></i> Sumber Pemasukan</h2>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+        <h2 class="mb-2 mb-md-0"><i class="bi bi-wallet2 me-2"></i> Sumber Pemasukan</h2>
         <a href="{{ route('sources.create') }}" class="btn btn-success">
             <i class="bi bi-plus-circle"></i> Tambah Sumber
         </a>
@@ -18,40 +18,44 @@
 
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Nama Sumber</th>
-                        <th class="text-end">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($sources as $index => $src)
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
                         <tr>
-                            <td>{{ $sources->firstItem() + $index }}</td>
-
-                            <td>{{ $src->name }}</td>
-                            <td class="text-end">
-                                <a href="{{ route('sources.edit', $src->id) }}" class="btn btn-sm btn-warning text-dark">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-                                <form action="{{ route('sources.destroy', $src->id) }}" method="POST" class="d-inline delete-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="btn btn-sm btn-danger btn-delete">
-                                        <i class="bi bi-trash"></i> Hapus
-                                    </button>
-                                </form>
-                            </td>
+                            <th style="width: 50px;">#</th>
+                            <th>Nama Sumber</th>
+                            <th class="text-center" style="width: 200px;">Aksi</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="text-center text-muted">Belum ada sumber pemasukan</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($sources as $index => $src)
+                            <tr>
+                                <td>{{ $sources->firstItem() + $index }}</td>
+                                <td>{{ $src->name }}</td>
+                                <td class="text-center">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-2">
+                                        <a href="{{ route('sources.edit', $src->id) }}"
+                                           class="btn btn-warning text-dark btn-sm w-100 w-sm-auto">
+                                            <i class="bi bi-pencil-square"></i> Edit
+                                        </a>
+                                        <form action="{{ route('sources.destroy', $src->id) }}" method="POST" class="delete-form w-100 w-sm-auto">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-danger btn-sm btn-delete w-100 w-sm-auto">
+                                                <i class="bi bi-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Belum ada sumber pemasukan</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

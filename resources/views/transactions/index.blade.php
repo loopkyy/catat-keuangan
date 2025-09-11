@@ -4,17 +4,72 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0"><i class="bi bi-cash-stack me-2"></i> Daftar Transaksi</h2>
-        <a href="{{ route('transactions.create') }}" class="btn btn-success">
-            <i class="bi bi-plus-circle"></i> Tambah Transaksi
-        </a>
+        <div class="d-flex">
+           {{-- Tombol Export PDF --}}
+<div class="btn-group me-2">
+    <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+    </button>
+    <ul class="dropdown-menu">
+        <li class="dropdown-header">Semua</li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.pdf', ['type' => 'all', 'range' => 'today']) }}">Hari ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.pdf', ['type' => 'all', 'range' => 'weekly']) }}">Minggu ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.pdf', ['type' => 'all', 'range' => 'monthly']) }}">Bulan ini</a></li>
+        <li><hr></li>
+        <li class="dropdown-header">Pemasukan</li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.pdf', ['type' => 'income', 'range' => 'today']) }}">Hari ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.pdf', ['type' => 'income', 'range' => 'weekly']) }}">Minggu ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.pdf', ['type' => 'income', 'range' => 'monthly']) }}">Bulan ini</a></li>
+        <li><hr></li>
+        <li class="dropdown-header">Pengeluaran</li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.pdf', ['type' => 'expense', 'range' => 'today']) }}">Hari ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.pdf', ['type' => 'expense', 'range' => 'weekly']) }}">Minggu ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.pdf', ['type' => 'expense', 'range' => 'monthly']) }}">Bulan ini</a></li>
+    </ul>
+</div>
+
+          {{-- Tombol Export Excel --}}
+<div class="btn-group me-2">
+    <button class="btn btn-outline-success dropdown-toggle" data-bs-toggle="dropdown">
+        <i class="bi bi-file-earmark-excel"></i> Export Excel
+    </button>
+    <ul class="dropdown-menu">
+        <li class="dropdown-header">Semua</li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.excel', ['type' => 'all', 'range' => 'today']) }}">Hari ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.excel', ['type' => 'all', 'range' => 'weekly']) }}">Minggu ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.excel', ['type' => 'all', 'range' => 'monthly']) }}">Bulan ini</a></li>
+        <li><hr></li>
+        <li class="dropdown-header">Pemasukan</li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.excel', ['type' => 'income', 'range' => 'today']) }}">Hari ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.excel', ['type' => 'income', 'range' => 'weekly']) }}">Minggu ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.excel', ['type' => 'income', 'range' => 'monthly']) }}">Bulan ini</a></li>
+        <li><hr></li>
+        <li class="dropdown-header">Pengeluaran</li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.excel', ['type' => 'expense', 'range' => 'today']) }}">Hari ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.excel', ['type' => 'expense', 'range' => 'weekly']) }}">Minggu ini</a></li>
+        <li><a class="dropdown-item" href="{{ route('transactions.export.excel', ['type' => 'expense', 'range' => 'monthly']) }}">Bulan ini</a></li>
+    </ul>
+</div>
+
+            <a href="{{ route('transactions.create') }}" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Tambah Transaksi
+            </a>
+        </div>
     </div>
 
+    {{-- Flash Message --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
+    
+@php
+    $totalIncome  = $totalIncome  ?? $transactions->where('type','income')->sum('amount');
+    $totalExpense = $totalExpense ?? $transactions->where('type','expense')->sum('amount');
+    $balance      = $balance      ?? ($totalIncome - $totalExpense);
+@endphp
 
     {{-- Ringkasan Saldo --}}
     <div class="row mb-4">

@@ -4,7 +4,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Tujuan Tabungan</h2>
     <a href="{{ route('goals.create') }}" class="btn btn-success">
-        <i class="bi bi-plus-lg"></i> Tambah Tujuan
+         <i class="bi bi-plus-circle"></i> Tambah Tujuan
     </a>
 </div>
 

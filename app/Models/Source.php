@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Source extends Model
 {
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'description'];
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
+
 

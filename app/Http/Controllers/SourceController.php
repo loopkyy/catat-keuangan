@@ -9,9 +9,11 @@ class SourceController extends Controller
 {
     public function index()
     {
-        $sources = Source::all();
+        $sources = Source::paginate(10);
+
         return view('sources.index', compact('sources'));
     }
+    
 
     public function create()
     {

@@ -29,7 +29,8 @@
                 <tbody>
                     @forelse($sources as $index => $src)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $sources->firstItem() + $index }}</td>
+
                             <td>{{ $src->name }}</td>
                             <td class="text-end">
                                 <a href="{{ route('sources.edit', $src->id) }}" class="btn btn-sm btn-warning text-dark">
@@ -52,6 +53,11 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    {{-- Pagination --}}
+    <div class="mt-3 d-flex justify-content-center">
+        {{ $sources->links('custom-pagination') }}
     </div>
 </div>
 @endsection

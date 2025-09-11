@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Kategori</h2>
+    <h2>Kategori Pengeluaran</h2>
     <a href="{{ route('categories.create') }}" class="btn btn-success">
          <i class="bi bi-plus-circle"></i> Tambah Kategori
     </a>
@@ -16,28 +16,41 @@
 @endif
 <div class="card shadow-sm">
     <div class="card-body">
-        <ul class="list-group list-group-flush">
-            @forelse($categories as $cat)
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span>{{ $cat->name }}</span>
-                    <div>
-                        <a href="{{ route('categories.edit', $cat->id) }}" class="btn btn-warning btn-sm me-1">
-                            <i class="bi bi-pencil-square"></i> Edit
-                        </a>
-                        <form action="{{ route('categories.destroy', $cat->id) }}" method="POST" class="d-inline delete-form">
-                            @csrf @method('DELETE')
-                            <button type="button" class="btn btn-danger btn-sm btn-delete">
-                                <i class="bi bi-trash"></i> Hapus
-                            </button>
-                        </form>
-                    </div>
-                </li>
-            @empty
-                <li class="list-group-item text-center text-muted">Belum ada kategori.</li>
-            @endforelse
-        </ul>
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Kategori Pengeluaran</th>
+                    <th style="width: 200px;" class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($categories as $index => $cat)
+                    <tr>
+                        <td>{{ $categories->firstItem() + $index }}</td>
+                        <td>{{ $cat->name }}</td>
+                        <td class="text-center">
+                            <a href="{{ route('categories.edit', $cat->id) }}" class="btn btn-warning btn-sm me-1">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <form action="{{ route('categories.destroy', $cat->id) }}" method="POST" class="d-inline delete-form">
+                                @csrf @method('DELETE')
+                                <button type="button" class="btn btn-danger btn-sm btn-delete">
+                                    <i class="bi bi-trash"></i> Hapus
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">Belum ada kategori.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
+
 
 {{-- Pagination --}}
 <div class="mt-3 d-flex justify-content-center">

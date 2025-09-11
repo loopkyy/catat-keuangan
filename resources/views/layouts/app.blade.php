@@ -10,6 +10,9 @@
     
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- AOS Animation -->
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
     
     <style>
         html, body {
@@ -51,9 +54,10 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <div class="container">
-        <a class="navbar-brand" href="{{ url('/') }}">
-            <i class="bi bi-wallet2"></i> Catat Keuangan
-        </a>
+       <a class="navbar-brand" href="{{ url('/') }}" title="Kembali ke Dashboard">
+    <i class="bi bi-wallet2"></i> Catat Keuangan
+</a>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -90,6 +94,13 @@
     &copy; {{ date('Y') }} Catat Keuangan. Made with  
     <a href="https://github.com/loopkyy" target="_blank">loopkyy</a>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 800, // durasi animasi
+        once: true     // animasi hanya jalan sekali
+    });
+</script>
 
 <!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
